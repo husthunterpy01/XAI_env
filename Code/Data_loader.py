@@ -26,7 +26,8 @@ class noisy_set(Dataset):
         with np.load(path_,'rb') as f:
             data['data'] = f['data']
             data['label'] = f['label']
-            
+            self.data_ = data['data'].transpose(0,2,1)
+            self.data_ = np.expand_dims(self.data_, axis=1)
             
             self.labels = data['label']
         
