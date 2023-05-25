@@ -1,5 +1,5 @@
 # Model
-## We will implement the model of Denoising Autoenocder combined with Transformer encoder
+## We will implement the model of Denoising Autoencoder combined with Transformer encoder
 import numpy as np
 import random
 import math
@@ -11,17 +11,17 @@ import torch.nn as nn
 import torch.nn.functional as F
 import torchvision
 import transformers
-%matplotlib inline
+#%matplotlib inline
 
 from math import sqrt
 from datetime import datetime
 from sklearn.metrics import mean_absolute_error
 from sklearn.metrics import mean_squared_error
 
-## DAE
-class Autoencoder(nn.module):
-    def__init__(self, input_size=16,hidden_dim=8, noise_level=0.01):
-        super(Autoencoder,self).__init__()
+## We will build a DAE model
+class Autoencoder(nn.Module):
+    def __init__(self, input_size, hidden_dim, noise_level=0.01):
+        super(Autoencoder, self).__init__()
         self.input_size, self.hidden_dim, self.noise_level = input_size, hidden_dim,noise_level
         self.fc1 = nn.Linear(self.input_size, self.hidden_dim)
         self.fc2 = nn.Linear(self.hidden_dim, self.input_size)
@@ -33,15 +33,14 @@ class Autoencoder(nn.module):
     
     def mask(self,x):
         corrupted_x = x + self.noise_level + torch.randn_like(x)   # randn_like  Initializes a tensor where all the elements are sampled from a normal distribution.
-        return corrupted_
-    x
+        return corrupted_x
     
     def decoder(self, x):
         h2 = self.fc2(x)
         return h2
     
     def forward (self, x):
-        out = self.mask(x)
+        out = self.mask(x) # Adding noise to feed the network
         encoder = self.encoder(out)
         decoder = self.decoder(encoder)
         return encoder, decoder 
@@ -50,8 +49,8 @@ class Autoencoder(nn.module):
     ### Positional encoding
     class PositionalEncoding(nn.Module):
         def __init__(self,d_model, dropout=0.0,max_len=16):
-            pe = torch.zerps(max_len,d_model)
-            position = torch.arange(-,max_len, dtype = torch.float).unsqueeze(1)
+            pe = torch.zeros(max_len,d_model)
+            position = torch.arange(0,max_len, dtype = torch.float).unsqueeze(1)
             
             div_term = torch.exp(torch.arange(0,d_model,2).float()*(-math.log(10000.0) / d_model))
             
@@ -63,16 +62,16 @@ class Autoencoder(nn.module):
             self.register_buffer('pe', pe)
             
         def forward(self, x):
-            x = x_ self.pe(:x.size(1),:).squeeze(1)
+            x = x + self.pe[:x.size(1), :].squeeze(1)
             return x
         
     class Net(nn.Module):
-        def __init__(set,feature_size=16, hidden_dim=32,num_layers=1,nhead=8,dropout=0.0,noise_level=0.01):
+        def __init__(self,feature_size, hidden_dim,num_layers,nhead,dropout,noise_level):
             super(Net,self).__init__()
             self.auto_hidden = int(feature_size/2)
-            input_size = self.auto_hiddent 
+            input_size = self.auto_hidden
             self.pos = PositionalEncoding(d_model=input_size, max_len=input_size)
-            encoder_layers = nn.TransformerEncoderLayer(d_model=input_size, nhead=nheasd, dim_feedforward=hidden_dim, dropout=dropout)
+            encoder_layers = nn.TransformerEncoderLayer(d_model=input_size, nhead=nhead, dim_feedforward=hidden_dim, dropout=dropout)
             self.cell = nn.TransformerEncoder(encoder_layers,num_layers=num_layers)
             self.linear = nn.Linear(input_size,1)
             self.autoencoder = Autoencoder(input_size = feature_size, hidden_dim = self.auto_hidden, noise_level=noise_level)
@@ -82,7 +81,7 @@ class Autoencoder(nn.module):
             encode, decode = self.autoencoder(x.shape(batch_size,-1)) # Equals batch_size * seq_len
             out = encode.reshape(batch_size,-1,self.auto_hidden)
             out = self.pos(out)
-            out = out.reshape(1,batch_size,-1) #(1,batch_size,feature_size)
+            out = out.reshape(1,batch_size,-1)  #(1,batch_size,feature_size)
             out = self.cell(out)
             out = out.reshape(batch_size,-1)
             out = self.linear(out)
