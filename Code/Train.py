@@ -36,6 +36,7 @@ def training():
         model.to(device)
         test_loss = 0.0
         test_loss_list = list()
+        criterion = nn.MSELoss()
         pred_list = list()
         with torch.no_grad():
             for x, rul in test_loader:
@@ -63,6 +64,7 @@ def training():
         model.to(device)
         val_loss = 0.0
         val_loss_list = list()
+        criterion = nn.MSELoss()
         with torch.no_grad():
             for x, rul in val_loader:
                 out = model(x.to(device).float())
