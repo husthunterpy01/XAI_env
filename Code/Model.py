@@ -22,7 +22,7 @@ from sklearn.metrics import mean_squared_error
 class Autoencoder(nn.Module):
     def __init__(self, input_size, hidden_dim,embed_dim, noise_level):
         super(Autoencoder, self).__init__()
-        self.input_size, self.hidden_dim, self.noise_level = input_size, embed_dim,noise_level
+        self.input_size, self.hidden_dim, self.noise_level = 2*embed_dim, embed_dim,noise_level
         self.embed_dim = embed_dim
         self.fc1 = nn.Linear(self.input_size, self.hidden_dim)
         self.fc2 = nn.Linear(self.hidden_dim, self.input_size)
