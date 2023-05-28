@@ -13,11 +13,11 @@ def training():
         train_loader = DataLoader(train_data,
                                   batch_size=128,
                                   shuffle=True)
-
+        shape = train_data.getshape()
         model = Net(d_model=config['d_model'],
                     nhead=config['n_head'],
+                    feature_size= shape
                     noise_level = config['noise_level'],
-                    feature_size = config['feature_size'],
                     embed_dim = config['embed_dim'],
                     n_head = configp['n_head'],
                     num_layers=config['num_layers'],
@@ -36,7 +36,6 @@ def training():
         model.to(device)
         test_loss = 0.0
         test_loss_list = list()
-        criterion = nn.MSELoss()
         pred_list = list()
         with torch.no_grad():
             for x, rul in test_loader:
@@ -64,7 +63,6 @@ def training():
         model.to(device)
         val_loss = 0.0
         val_loss_list = list()
-        criterion = nn.MSELoss()
         with torch.no_grad():
             for x, rul in val_loader:
                 out = model(x.to(device).float())

@@ -22,7 +22,7 @@ from sklearn.metrics import mean_squared_error
 class Autoencoder(nn.Module):
     def __init__(self, input_size, hidden_dim,embed_dim, noise_level):
         super(Autoencoder, self).__init__()
-        self.input_size, self.hidden_dim, self.noise_level = 2*embed_dim, embed_dim,noise_level
+        self.input_size, self.hidden_dim, self.noise_level = input_size, embed_dim,noise_level
         self.embed_dim = embed_dim
         self.fc1 = nn.Linear(self.input_size, self.hidden_dim)
         self.fc2 = nn.Linear(self.hidden_dim, self.input_size)
@@ -70,14 +70,14 @@ class Autoencoder(nn.Module):
         def __init__(self,feature_size, hidden_dim,num_layers,nhead,dropout,noise_level,embed_dim):
             super(Net,self).__init__()
             self.embed_dim = embed_dim
-            self.auto_hidden = int(feature_size/2)
             self.hidden_dim = 4*embed_dim
+            self.auto_hidden = int(feature_size / 2)
             input_size = self.auto_hidden
             self.pos = PositionalEncoding(d_model=input_size, max_len=input_size)
             encoder_layers = nn.TransformerEncoderLayer(d_model=input_size, nhead=nhead, dim_feedforward=hidden_dim, dropout=dropout)
             self.cell = nn.TransformerEncoder(encoder_layers,num_layers=num_layers)
             self.linear = nn.Linear(input_size,1)
-            self.autoencoder = Autoencoder(input_size = feature_size, hidden_dim = self.auto_hidden, noise_level=noise_level)
+            self.autoencoder = Autoencoder(input_size = input_size, hidden_dim = self.auto_hidden, noise_level=noise_level)
               
         def forward(self,x):
             batch_size, feature_num, feature_size = x.shape
