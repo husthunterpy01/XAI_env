@@ -4,9 +4,9 @@ metric:
     name: test_loss_avg
 parameters:
     batch_size:
-        values: [64]
+        values: [128]
     d_model:
-        value: 23
+        value: 16
     dff:
         values: [128, 256]
     dropout:
@@ -35,3 +35,9 @@ parameters:
         distribution: log_uniform
         min: -6
         max: -4  
+    noise_level:
+        distribution: uniform
+        min: 0.01
+        max: 0.05
+    embed_dim: 
+        value: 8
